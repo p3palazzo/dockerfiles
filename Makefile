@@ -103,7 +103,7 @@ freeze-file: $(STACK)/$(stack_freeze_file)
 %/$(stack_freeze_file): STACK = $*
 %/$(stack_freeze_file): common/pandoc-freeze.sh
 	docker build \
-		--tag pandoc/$(STACK)-builder-base \
+		--tag palazzo/pandoc-$(STACK)-builder-base \
 		--target=$(STACK)-builder-base \
 		-f $(makefile_dir)/$(STACK)/Dockerfile $(makefile_dir)
 	docker run --rm \
@@ -114,7 +114,7 @@ freeze-file: $(STACK)/$(stack_freeze_file)
 .PHONY: core
 core:
 	docker build \
-		--tag pandoc/$(STACK):$(PANDOC_VERSION) \
+		--tag palazzo/pandoc-$(STACK):$(PANDOC_VERSION) \
 		--build-arg pandoc_commit=$(PANDOC_COMMIT) \
 		--build-arg pandoc_version=$(PANDOC_VERSION) \
 		--build-arg without_crossref=$(WITHOUT_CROSSREF) \
@@ -125,7 +125,7 @@ core:
 .PHONY: crossref
 crossref: core
 	docker build \
-		--tag pandoc/$(STACK)-crossref:$(PANDOC_VERSION) \
+		--tag palazzo/pandoc-$(STACK)-crossref:$(PANDOC_VERSION) \
 		--build-arg pandoc_commit=$(PANDOC_COMMIT) \
 		--build-arg pandoc_version=$(PANDOC_VERSION) \
 		--build-arg without_crossref=$(WITHOUT_CROSSREF) \
@@ -136,41 +136,41 @@ crossref: core
 .PHONY: latex
 latex: crossref
 	docker build \
-		--tag pandoc/$(STACK)-latex:$(PANDOC_VERSION) \
+		--tag palazzo/pandoc-$(STACK)-latex:$(PANDOC_VERSION) \
 		--build-arg base_tag=$(PANDOC_VERSION) \
 		-f $(makefile_dir)/$(STACK)/latex.Dockerfile $(makefile_dir)
 # Mermaid ######################################################################
 .PHONY: mermaid
 mermaid: crossref
 	docker build \
-		--tag pandoc/$(STACK)-latex:$(PANDOC_VERSION) \
+		--tag palazzo/pandoc-$(STACK)-latex:$(PANDOC_VERSION) \
 		--build-arg base_tag=$(PANDOC_VERSION) \
 		-f $(makefile_dir)/$(STACK)/mermaid.Dockerfile $(makefile_dir)
 # LaTeX + EB Garamond ##########################################################
 .PHONY: latex-ebgaramond
 latex-ebgaramond: latex
 	docker build \
-		--tag pandoc/$(STACK)-latex:$(PANDOC_VERSION) \
+		--tag palazzo/pandoc-$(STACK)-latex:$(PANDOC_VERSION) \
 		--build-arg base_tag=$(PANDOC_VERSION) \
 		-f $(makefile_dir)/$(STACK)/latex-eb.Dockerfile $(makefile_dir)
 # Test #########################################################################
 .PHONY: test-core test-latex test-crossref
-test-core: IMAGE ?= pandoc/$(STACK):$(PANDOC_VERSION)
+test-core: IMAGE ?= palazzo/pandoc-$(STACK):$(PANDOC_VERSION)
 ifndef WITHOUT_CITEPROC
 test_citeproc = test-bib-conversion
 endif
 test-core:
 	IMAGE=$(IMAGE) make -C test test-core $(test_citeproc)
 
-test-citeproc: IMAGE ?= pandoc/$(STACK):$(PANDOC_VERSION)
+test-citeproc: IMAGE ?= palazzo/pandoc-$(STACK):$(PANDOC_VERSION)
 test-citeproc:
 	IMAGE=$(IMAGE) make -C test test-citeproc
 
-test-crossref: IMAGE ?= pandoc/$(STACK)-crossref:$(PANDOC_VERSION)
+test-crossref: IMAGE ?= palazzo/pandoc-$(STACK)-crossref:$(PANDOC_VERSION)
 test-crossref:
 	test -n "$(WITHOUT_CROSSREF)" || IMAGE=$(IMAGE) make -C test test-crossref
 
-test-latex: IMAGE ?= pandoc/$(STACK)-latex:$(PANDOC_VERSION)
+test-latex: IMAGE ?= palazzo/pandoc-$(STACK)-latex:$(PANDOC_VERSION)
 test-latex:
 	IMAGE=$(IMAGE) make -C test test-latex
 
