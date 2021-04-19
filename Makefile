@@ -146,6 +146,13 @@ mermaid: crossref
 		--tag pandoc/$(STACK)-latex:$(PANDOC_VERSION) \
 		--build-arg base_tag=$(PANDOC_VERSION) \
 		-f $(makefile_dir)/$(STACK)/mermaid.Dockerfile $(makefile_dir)
+# LaTeX + EB Garamond ##########################################################
+.PHONY: latex-ebgaramond
+latex-ebgaramond: latex
+	docker build \
+		--tag pandoc/$(STACK)-latex:$(PANDOC_VERSION) \
+		--build-arg base_tag=$(PANDOC_VERSION) \
+		-f $(makefile_dir)/$(STACK)/latex-eb.Dockerfile $(makefile_dir)
 # Test #########################################################################
 .PHONY: test-core test-latex test-crossref
 test-core: IMAGE ?= pandoc/$(STACK):$(PANDOC_VERSION)
