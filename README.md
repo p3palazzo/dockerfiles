@@ -17,6 +17,12 @@ This repo contains a collection of Dockerfiles to build various
     - [Managing new Pandoc Releases](#managing-new-pandoc-releases)
 - [License](#license)
 
+## This fork differs from the upstream ##
+
+I added two LaTeX images: one contains the EB–Garamond font package,
+the other contains the `UnB Pro` Opentype fonts included in the
+`./unb-pro` folder.
+
 Available Images
 ================================================================================
 
