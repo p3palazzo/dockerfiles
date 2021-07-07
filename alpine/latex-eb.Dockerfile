@@ -32,7 +32,7 @@ RUN /root/install-texlive.sh
 COPY common/latex/install-tex-packages.sh /root/install-tex-packages.sh
 RUN /root/install-tex-packages.sh
 
-RUN tlmgr install ebgaramond
+RUN tlmgr install ebgaramond academicons
 
 RUN rm -f /root/texlive.profile \
           /root/install-texlive.sh \
